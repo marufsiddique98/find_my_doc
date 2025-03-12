@@ -58,30 +58,38 @@ class HomeBottomNavigationBar extends ConsumerWidget {
                 icon: Icon(
                   Icons.home_filled,
                   size: 24.w,
-                  color: index == 0 ? AppColors.purpleColor : AppColors.grayColorA7,
+                  color: index == 0
+                      ? AppColors.purpleColor
+                      : AppColors.grayColorA7,
                 ),
                 label: 'Home'),
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.help_center,
                   size: 24.w,
-                  color: index == 1 ? AppColors.purpleColor : AppColors.grayColorA7,
+                  color: index == 1
+                      ? AppColors.purpleColor
+                      : AppColors.grayColorA7,
                 ),
                 label: 'Help'),
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.schedule,
                   size: 24.w,
-                  color: index == 2 ? AppColors.purpleColor : AppColors.grayColorA7,
+                  color: index == 2
+                      ? AppColors.purpleColor
+                      : AppColors.grayColorA7,
                 ),
-                label: 'My Orders'),
+                label: 'Activity'),
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.menu,
                   size: 24.w,
-                  color: index == 3 ? AppColors.purpleColor : AppColors.grayColorA7,
+                  color: index == 3
+                      ? AppColors.purpleColor
+                      : AppColors.grayColorA7,
                 ),
-                label: 'More'),
+                label: 'Account'),
           ],
         ),
       ),

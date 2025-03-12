@@ -20,6 +20,7 @@ import '../../../../core/common/dialogs/show_loading.dart';
 import '../../../../core/common/widgets/primary_button.dart';
 import '../../../../generated/assets.dart';
 import '../../../../main.dart';
+import '../../../home/presentation/screens/home_bottom_navigation_bar.dart';
 import '../../../home/presentation/screens/home_screen.dart';
 import '../states/signup_provider.dart';
 import '../widgets/my_input_field.dart';
@@ -50,7 +51,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Image.asset(Assets.imagesLogo, width: 170.w),
                 Gap(50),
                 ...MyInputField(context, text: 'Email', controller: email),
-                ...MyInputField(context, text: 'Password', controller: password),
+                ...MyInputField(context,
+                    text: 'Password', controller: password),
                 Padding(
                   padding: const EdgeInsets.only(top: 20.0, bottom: 10),
                   child: PrimaryButton(
@@ -70,7 +72,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         log(response.body);
                         if (response.statusCode == 200) {
                           storage.setToken(jsonDecode(response.body)['token']);
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => HomeBottomNavigationBar()));
                         } else {
                           Fluttertoast.showToast(msg: response.body);
                         }
@@ -130,13 +135,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 PrimaryButton(
                   context,
                   text: 'Register As A Doctor',
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DoctorSignupScreen())),
+                  onTap: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => DoctorSignupScreen())),
                 ),
                 PrimaryButton(
                   context,
                   isOutlined: true,
                   text: 'Create An Account',
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SignupScreen())),
+                  onTap: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => SignupScreen())),
                 ),
                 Gap(20.h),
                 Image.asset(

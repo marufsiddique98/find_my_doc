@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:find_my_doc/features/home/data/models/request_doctor.dart';
+import 'package:find_my_doc/features/map/presentation/screens/map_screen.dart';
 import 'package:find_my_doc/main.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,12 +11,12 @@ import '../../../../config/constants/app_strings.dart';
 import '../../../auth/presentation/screens/doctor_signup_screen.dart';
 import '../../data/models/doctor.dart';
 import '../screens/help_screen.dart';
-import '../screens/home_screen.dart';
 import '../screens/more_screen.dart';
 import '../screens/my_orders_screen.dart';
 import 'package:http/http.dart' as http;
 
-final bottomNavigationProvider = StateNotifierProvider<BottomNavigationViewModel, int>(
+final bottomNavigationProvider =
+    StateNotifierProvider<BottomNavigationViewModel, int>(
   (ref) => BottomNavigationViewModel(ref),
 );
 
@@ -26,19 +26,22 @@ class BottomNavigationViewModel extends StateNotifier<int> {
 
   void updateIndex(int newIndex) {
     state = newIndex;
-    ref.read(bottomNavigationWidgetProvider.notifier).updateScreenIndex(newIndex);
+    ref
+        .read(bottomNavigationWidgetProvider.notifier)
+        .updateScreenIndex(newIndex);
   }
 }
 
-final bottomNavigationWidgetProvider = StateNotifierProvider<BottomNavigationWidgetViewModel, Widget>(
+final bottomNavigationWidgetProvider =
+    StateNotifierProvider<BottomNavigationWidgetViewModel, Widget>(
   (ref) => BottomNavigationWidgetViewModel(),
 );
 
 class BottomNavigationWidgetViewModel extends StateNotifier<Widget> {
-  BottomNavigationWidgetViewModel() : super(HomeScreen());
+  BottomNavigationWidgetViewModel() : super(MapScreen());
 
   final List<Widget> _screens = [
-    HomeScreen(),
+    MapScreen(),
     HelpScreen(),
     MyOrdersScreen(),
     MoreScreen(),
@@ -49,9 +52,12 @@ class BottomNavigationWidgetViewModel extends StateNotifier<Widget> {
   }
 }
 
-final specialityProvider = StateProvider<String>((ref) => AppString.specialties[0]);
+final specialityProvider =
+    StateProvider<String>((ref) => AppString.specialties[0]);
 
-final doctorSearchProvider = StateNotifierProvider<DoctorSearchNotifier, AsyncValue<List<Doctor>>>((ref) => DoctorSearchNotifier());
+final doctorSearchProvider =
+    StateNotifierProvider<DoctorSearchNotifier, AsyncValue<List<Doctor>>>(
+        (ref) => DoctorSearchNotifier());
 
 class DoctorSearchNotifier extends StateNotifier<AsyncValue<List<Doctor>>> {
   DoctorSearchNotifier() : super(AsyncLoading()) {
@@ -59,25 +65,27 @@ class DoctorSearchNotifier extends StateNotifier<AsyncValue<List<Doctor>>> {
   }
   init() async {
     Position position = await determinePosition();
-    String data = await getDoctorSearchData(AppString.specialties[0], position);
+    String data = await getDoctorSearchData(position);
     List? result = jsonDecode(data);
     if (result == null) {
       state = AsyncData([]);
     } else {
-      state = AsyncData(List<Doctor>.from(result.map((el) => Doctor.fromJson(el)).toList()));
+      state = AsyncData(
+          List<Doctor>.from(result.map((el) => Doctor.fromJson(el)).toList()));
     }
   }
 
   changeVal(String val) async {
     state = AsyncLoading();
     Position position = await determinePosition();
-    String data = await getDoctorSearchData(val, position);
+    String data = await getDoctorSearchData(position);
     print('data: ' + data);
     List? result = jsonDecode(data);
     if (result == null) {
       state = AsyncData([]);
     } else {
-      state = AsyncData(List<Doctor>.from(result.map((el) => Doctor.fromJson(el)).toList()));
+      state = AsyncData(
+          List<Doctor>.from(result.map((el) => Doctor.fromJson(el)).toList()));
     }
   }
 
@@ -104,9 +112,10 @@ class DoctorSearchNotifier extends StateNotifier<AsyncValue<List<Doctor>>> {
   }
 }
 
-Future<String> getDoctorSearchData(String speciality, Position position) async {
+Future<String> getDoctorSearchData(Position position) async {
   var res = await http.get(
-    Uri.parse('${AppString.baseUrl}api/doctors?speciality=${speciality}&latitude=37.7749&longitude=-122.4194'),
+    Uri.parse(
+        '${AppString.baseUrl}api/doctors?latitude=40.7128&longitude=-74.006'),
     headers: {
       HttpHeaders.authorizationHeader: 'Bearer ${storage.getToken()}',
     },
