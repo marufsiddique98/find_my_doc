@@ -13,6 +13,7 @@ import 'package:sized_context/sized_context.dart';
 import '../../../../config/constants/app_colors.dart';
 import '../../../../config/constants/app_strings.dart';
 import '../../../../core/common/dialogs/show_loading.dart';
+import '../../../home/presentation/screens/home_bottom_navigation_bar.dart';
 import '../states/signup_provider.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../../../core/common/widgets/primary_button.dart';
@@ -65,8 +66,10 @@ class _DoctorSignupScreenState extends ConsumerState<DoctorSignupScreen> {
                 Gap(40),
                 ...MyInputField(context, text: 'Full Name', controller: name),
                 ...MyInputField(context, text: 'Email', controller: email),
-                ...MyInputField(context, text: 'Password', controller: password),
-                ...MyInputField(context, text: 'Confirm Password', controller: cpassword),
+                ...MyInputField(context,
+                    text: 'Password', controller: password),
+                ...MyInputField(context,
+                    text: 'Confirm Password', controller: cpassword),
                 Gap(10),
                 Container(
                   width: context.widthPx,
@@ -156,9 +159,13 @@ class _DoctorSignupScreenState extends ConsumerState<DoctorSignupScreen> {
                         storage.setToken(jsonDecode(res.body)['token']);
                       }
                       if (response.statusCode == 201) {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => HomeBottomNavigationBar()));
                       } else {
-                        Fluttertoast.showToast(msg: 'Invalid login credentials');
+                        Fluttertoast.showToast(
+                            msg: 'Invalid login credentials');
                       }
                     } catch (e) {
                       Navigator.pop(context);
@@ -180,7 +187,8 @@ class _DoctorSignupScreenState extends ConsumerState<DoctorSignupScreen> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => LoginScreen())),
+                      onTap: () => Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => LoginScreen())),
                       child: Text(
                         'Sign In',
                         style: GoogleFonts.poppins(
@@ -225,7 +233,8 @@ Future<Position> determinePosition() async {
   }
 
   if (permission == LocationPermission.deniedForever) {
-    return Future.error('Location permissions are permanently denied, we cannot request permissions.');
+    return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.');
   }
   return await Geolocator.getCurrentPosition();
 }

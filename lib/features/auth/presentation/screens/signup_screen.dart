@@ -16,6 +16,7 @@ import '../../../../core/common/dialogs/show_loading.dart';
 import '../../../../core/common/widgets/primary_button.dart';
 import '../../../../generated/assets.dart';
 import '../../../../main.dart';
+import '../../../home/presentation/screens/home_bottom_navigation_bar.dart';
 import '../../../home/presentation/screens/home_screen.dart';
 import '../states/signup_provider.dart';
 import '../widgets/my_input_field.dart';
@@ -64,8 +65,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 Gap(40),
                 ...MyInputField(context, text: 'Full Name', controller: name),
                 ...MyInputField(context, text: 'Email', controller: email),
-                ...MyInputField(context, text: 'Password', controller: password),
-                ...MyInputField(context, text: 'Confirm Password', controller: cpassword),
+                ...MyInputField(context,
+                    text: 'Password', controller: password),
+                ...MyInputField(context,
+                    text: 'Confirm Password', controller: cpassword),
                 Transform.translate(
                   offset: Offset(-14, 0),
                   child: Row(
@@ -128,9 +131,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       log(res.body);
                       if (res.statusCode == 200) {
                         storage.setToken(jsonDecode(res.body)['token']);
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => HomeBottomNavigationBar()));
                       } else {
-                        Fluttertoast.showToast(msg: 'Invalid login credentials');
+                        Fluttertoast.showToast(
+                            msg: 'Invalid login credentials');
                       }
                     } catch (e) {
                       Navigator.pop(context);
@@ -152,7 +159,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => LoginScreen())),
+                      onTap: () => Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => LoginScreen())),
                       child: Text(
                         'Sign In',
                         style: GoogleFonts.poppins(
