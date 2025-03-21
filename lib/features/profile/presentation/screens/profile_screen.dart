@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../config/constants/app_colors.dart';
 import '../../../../core/common/widgets/my_app_bar.dart';
+import '../states/profile_provider.dart';
 import '../widget/avatar_widget.dart';
 
 import '../../../../generated/assets.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(profileProvider);
     return Scaffold(
       appBar: MyAppBar(title: 'Your Profile'),
       body: ListView(
@@ -22,7 +25,7 @@ class ProfileScreen extends StatelessWidget {
           Gap(30),
           ProfileDataWidget(
             title: 'Name',
-            value: 'Nazmul Hoque Shawon',
+            value: profile.value?.name ?? '',
             onEdit: () {
               showDialog(
                   context: context,
@@ -51,82 +54,93 @@ class ProfileScreen extends StatelessWidget {
             },
           ),
           ProfileDataWidget(
+            title: 'Rating',
+            value: '${profile.value?.ratings ?? 0}',
             canEdit: false,
-            title: 'Mobile Number',
-            value: '01848188117',
-            onEdit: () {},
           ),
-          ProfileDataWidget(
-            title: 'Email',
-            value: 'hoqueway@gmail.com',
-            onEdit: () {
-              showDialog(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                        title: Text('Edit your email'),
-                        content: TextFormField(
-                          decoration: InputDecoration(
-                            hintText: 'Enter your email',
-                          ),
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(ctx);
-                            },
-                            child: Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(ctx);
-                            },
-                            child: Text('Update'),
-                          ),
-                        ],
-                      ));
-            },
-          ),
-          ProfileDataWidget(
-            title: 'Gender',
-            value: 'Male',
-            onEdit: () async {},
-          ),
-          ProfileDataWidget(
-            title: 'Date of Birth',
-            value: '2001-1-07-02',
-            onEdit: () {
-              showDatePicker(
-                context: context,
-                firstDate: DateTime(1900),
-                lastDate: DateTime.now(),
-                initialEntryMode: DatePickerEntryMode.calendarOnly,
-                confirmText: 'Update',
-                helpText: '',
-                builder: (BuildContext context, Widget? child) {
-                  return Theme(
-                    data: ThemeData.light().copyWith(
-                      primaryColor: Colors.green,
-                      colorScheme: ColorScheme.light(primary: Colors.green),
-                      dialogTheme: DialogTheme(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      textButtonTheme: TextButtonThemeData(
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all(AppColors.purpleColor),
-                          foregroundColor: WidgetStateProperty.all(Colors.white),
-                          padding: WidgetStateProperty.all(EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
-                          shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-                        ),
-                      ),
-                    ),
-                    child: child!,
-                  );
-                },
-              );
-            },
-          ),
+          if (profile.value?.speciality != null)
+            ProfileDataWidget(
+              title: 'Speciality',
+              value: profile.value?.speciality ?? '',
+              canEdit: false,
+            )
+          // ProfileDataWidget(
+          //   canEdit: false,
+          //   title: 'Mobile Number',
+          //   value: '01848188117',
+          //   onEdit: () {},
+          // ),
+          // ProfileDataWidget(
+          //   title: 'Email',
+          //   value: 'hoqueway@gmail.com',
+          //   onEdit: () {
+          //     showDialog(
+          //         context: context,
+          //         builder: (ctx) => AlertDialog(
+          //               title: Text('Edit your email'),
+          //               content: TextFormField(
+          //                 decoration: InputDecoration(
+          //                   hintText: 'Enter your email',
+          //                 ),
+          //               ),
+          //               actions: [
+          //                 TextButton(
+          //                   onPressed: () {
+          //                     Navigator.pop(ctx);
+          //                   },
+          //                   child: Text('Cancel'),
+          //                 ),
+          //                 TextButton(
+          //                   onPressed: () {
+          //                     Navigator.pop(ctx);
+          //                   },
+          //                   child: Text('Update'),
+          //                 ),
+          //               ],
+          //             ));
+          //   },
+          // ),
+          // ProfileDataWidget(
+          //   title: 'Gender',
+          //   value: 'Male',
+          //   onEdit: () async {},
+          // ),
+          // ProfileDataWidget(
+          //   title: 'Date of Birth',
+          //   value: '2001-1-07-02',
+          //   onEdit: () {
+          //     showDatePicker(
+          //       context: context,
+          //       firstDate: DateTime(1900),
+          //       lastDate: DateTime.now(),
+          //       initialEntryMode: DatePickerEntryMode.calendarOnly,
+          //       confirmText: 'Update',
+          //       helpText: '',
+          //       builder: (BuildContext context, Widget? child) {
+          //         return Theme(
+          //           data: ThemeData.light().copyWith(
+          //             primaryColor: Colors.green,
+          //             colorScheme: ColorScheme.light(primary: Colors.green),
+          //             dialogTheme: DialogTheme(
+          //               shape: RoundedRectangleBorder(
+          //                 borderRadius: BorderRadius.circular(8),
+          //               ),
+          //             ),
+          //             textButtonTheme: TextButtonThemeData(
+          //               style: ButtonStyle(
+          //                 backgroundColor: WidgetStateProperty.all(AppColors.purpleColor),
+          //                 foregroundColor: WidgetStateProperty.all(Colors.white),
+          //                 padding: WidgetStateProperty.all(EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
+          //                 shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+          //               ),
+          //             ),
+          //           ),
+          //           child: child!,
+          //         );
+          //       },
+          //     );
+          //   },
+          // ),
         ],
       ),
     );

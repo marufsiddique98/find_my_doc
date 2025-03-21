@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
@@ -6,12 +7,14 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/constants/app_colors.dart';
 import '../../../../generated/assets.dart';
+import '../states/profile_provider.dart';
 
-class AvatarWidget extends StatelessWidget {
+class AvatarWidget extends ConsumerWidget {
   const AvatarWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(profileProvider);
     return Row(
       children: [
         Stack(
@@ -47,14 +50,14 @@ class AvatarWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Asif',
+                profile.value?.name ?? '',
                 style: GoogleFonts.poppins(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               Text(
-                'User ID: D0003',
+                'User ID: ${profile.value?.id ?? 0}',
                 style: GoogleFonts.poppins(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w500,

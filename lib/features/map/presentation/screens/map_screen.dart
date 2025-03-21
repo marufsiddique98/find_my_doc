@@ -11,6 +11,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/constants/app_colors.dart';
+import '../../../../config/constants/app_strings.dart';
 import '../../../../core/common/widgets/secondary_button.dart';
 import '../../../auth/presentation/screens/doctor_signup_screen.dart';
 import '../../../home/presentation/states/home_screen_states.dart';
@@ -26,6 +27,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   MapController mapController = MapController.withPosition(
     initPosition: GeoPoint(latitude: 29, longitude: 89),
   );
+
   TextEditingController searchController = TextEditingController();
   String searchText = '';
   FocusNode searchFocus = FocusNode();
@@ -40,9 +42,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         GeoPoint? tappedPoint = mapController.listenerMapSingleTapping.value;
         if (tappedPoint != null) {
           Doctor? selectedDoctor = doctors.firstWhere(
-            (doctor) =>
-                doctor.latitude == tappedPoint.latitude &&
-                doctor.longitude == tappedPoint.longitude,
+            (doctor) => doctor.latitude == tappedPoint.latitude && doctor.longitude == tappedPoint.longitude,
             orElse: () => Doctor(),
           );
 
@@ -59,16 +59,13 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       Position position = await determinePosition();
 
       setState(() {
-        mapController.moveTo(GeoPoint(
-            latitude: position.latitude, longitude: position.longitude));
+        mapController.moveTo(GeoPoint(latitude: position.latitude, longitude: position.longitude));
       });
 
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(position.latitude, position.longitude);
+      List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
 
       setState(() {
-        searchText =
-            "${placemarks[0].street}, ${placemarks[0].locality}, ${placemarks[0].country}";
+        searchText = "${placemarks[0].street}, ${placemarks[0].locality}, ${placemarks[0].country}";
         searchController.text = searchText;
       });
       addMarkers();
@@ -80,7 +77,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   void addMarkers() async {
     print('add marker');
     Position position = await determinePosition();
-    String res = await getDoctorSearchData(position);
+    String res = await getDoctorSearchData(position: position);
     await mapController.addMarker(
       GeoPoint(latitude: position.latitude!, longitude: position.longitude!),
       markerIcon: MarkerIcon(
@@ -92,8 +89,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       ),
     );
     doctors.clear();
-    List<Doctor> docs = List<Doctor>.from(
-        jsonDecode(res).map((el) => Doctor.fromJson(el)).toList());
+    List<Doctor> docs = List<Doctor>.from(jsonDecode(res).map((el) => Doctor.fromJson(el)).toList());
     doctors.addAll(docs);
 
     for (Doctor doctor in docs) {
@@ -126,6 +122,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(doctorSearchProvider);
     final notifier = ref.read(doctorSearchProvider.notifier);
+    final speciality = ref.watch(specialityProvider);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
@@ -172,9 +169,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   Row(
                     children: [
                       Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8)),
+                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
                         child: IconButton(
                           onPressed: () {
                             showModalBottomSheet(
@@ -190,48 +185,35 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                                             itemBuilder: (_, index) {
                                               Doctor doctor = doctors[index];
                                               return Card(
-                                                color: AppColors.lightGreenColor
-                                                    .withAlpha(60),
+                                                color: AppColors.lightGreenColor.withAlpha(60),
                                                 child: ListTile(
                                                   title: Text('${doctor.name}'),
-                                                  subtitle: Text(
-                                                      'Speciality: ${doctor.speciality}\nRating: ${doctor.ratings}✮'),
+                                                  subtitle: Text('Speciality: ${doctor.speciality}\nRating: ${doctor.ratings}✮'),
                                                   trailing: IconButton(
                                                     onPressed: () {
                                                       showDialog(
                                                           context: context,
-                                                          builder:
-                                                              (ctx) =>
-                                                                  AlertDialog(
-                                                                    title: Text(
-                                                                        'Book an appointment?'),
-                                                                    content: Text(
-                                                                        'Do you want to request for an appointment?'),
-                                                                    actions: [
-                                                                      SecondaryButton(
-                                                                        context,
-                                                                        text:
-                                                                            'Cancel',
-                                                                        onTap:
-                                                                            () {
-                                                                          Navigator.pop(
-                                                                              ctx);
-                                                                        },
-                                                                      ),
-                                                                      SecondaryButton(
-                                                                        context,
-                                                                        text:
-                                                                            'Book',
-                                                                        onTap:
-                                                                            () {
-                                                                          notifier
-                                                                              .requestDoctorAppointment(doctor);
-                                                                          Navigator.pop(
-                                                                              ctx);
-                                                                        },
-                                                                      ),
-                                                                    ],
-                                                                  ));
+                                                          builder: (ctx) => AlertDialog(
+                                                                title: Text('Book an appointment?'),
+                                                                content: Text('Do you want to request for an appointment?'),
+                                                                actions: [
+                                                                  SecondaryButton(
+                                                                    context,
+                                                                    text: 'Cancel',
+                                                                    onTap: () {
+                                                                      Navigator.pop(ctx);
+                                                                    },
+                                                                  ),
+                                                                  SecondaryButton(
+                                                                    context,
+                                                                    text: 'Book',
+                                                                    onTap: () {
+                                                                      notifier.requestDoctorAppointment(doctor);
+                                                                      Navigator.pop(ctx);
+                                                                    },
+                                                                  ),
+                                                                ],
+                                                              ));
                                                     },
                                                     icon: Icon(Icons.call),
                                                   ),
@@ -243,8 +225,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                                           );
                                   },
                                   error: (error, t) => SizedBox(),
-                                  loading: () => Center(
-                                      child: CircularProgressIndicator()),
+                                  loading: () => Center(child: CircularProgressIndicator()),
                                 ),
                               ),
                             );
@@ -259,27 +240,18 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                           controller: searchController,
                           decoration: InputDecoration(
                             hintText: 'Search location',
-                            hintStyle: GoogleFonts.poppins(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.grayColor63),
+                            hintStyle: GoogleFonts.poppins(fontSize: 16.sp, fontWeight: FontWeight.w400, color: AppColors.grayColor63),
                             filled: true,
                             fillColor: Colors.white,
-                            prefixIcon: Icon(Icons.location_on_outlined,
-                                color: AppColors.grayColor1E, size: 22.w),
-                            border: OutlineInputBorder(
-                                gapPadding: 0,
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(8)),
+                            prefixIcon: Icon(Icons.location_on_outlined, color: AppColors.grayColor1E, size: 22.w),
+                            border: OutlineInputBorder(gapPadding: 0, borderSide: BorderSide.none, borderRadius: BorderRadius.circular(8)),
                             contentPadding: EdgeInsets.zero,
                           ),
                         ),
                       ),
                       Gap(10.w),
                       Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8)),
+                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
                         child: IconButton(
                           onPressed: () {
                             if (searchFocus.hasFocus) {
@@ -324,6 +296,29 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             ),
           ),
         ],
+      ),
+      bottomSheet: Container(
+        margin: EdgeInsets.only(left: 25.w, right: 25.w, bottom: 25.h, top: 40.h),
+        padding: EdgeInsets.only(left: 15),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.grayColorD0, width: 1),
+        ),
+        child: DropdownButton<String>(
+          value: speciality,
+          items: AppString.specialties
+              .map((el) => DropdownMenuItem<String>(
+                    child: Text(el),
+                    value: el,
+                  ))
+              .toList(),
+          onChanged: (val) {
+            ref.read(specialityProvider.notifier).state = val!;
+            notifier.changeVal(val);
+          },
+          underline: SizedBox(),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(

@@ -66,18 +66,18 @@ class _DoctorSignupScreenState extends ConsumerState<DoctorSignupScreen> {
                 Gap(40),
                 ...MyInputField(context, text: 'Full Name', controller: name),
                 ...MyInputField(context, text: 'Email', controller: email),
-                ...MyInputField(context,
-                    text: 'Password', controller: password),
-                ...MyInputField(context,
-                    text: 'Confirm Password', controller: cpassword),
+                ...MyInputField(context, text: 'Password', controller: password),
+                ...MyInputField(context, text: 'Confirm Password', controller: cpassword),
                 Gap(10),
                 Container(
+                  padding: EdgeInsets.symmetric(horizontal: 15),
                   width: context.widthPx,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: AppColors.grayColorD0, width: 1),
                   ),
                   child: DropdownButton<String>(
+                    isExpanded: true,
                     value: speciality,
                     items: AppString.specialties
                         .map((el) => DropdownMenuItem<String>(
@@ -159,13 +159,9 @@ class _DoctorSignupScreenState extends ConsumerState<DoctorSignupScreen> {
                         storage.setToken(jsonDecode(res.body)['token']);
                       }
                       if (response.statusCode == 201) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => HomeBottomNavigationBar()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => HomeBottomNavigationBar()));
                       } else {
-                        Fluttertoast.showToast(
-                            msg: 'Invalid login credentials');
+                        Fluttertoast.showToast(msg: 'Invalid login credentials');
                       }
                     } catch (e) {
                       Navigator.pop(context);
@@ -187,8 +183,7 @@ class _DoctorSignupScreenState extends ConsumerState<DoctorSignupScreen> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => LoginScreen())),
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => LoginScreen())),
                       child: Text(
                         'Sign In',
                         style: GoogleFonts.poppins(
@@ -233,8 +228,7 @@ Future<Position> determinePosition() async {
   }
 
   if (permission == LocationPermission.deniedForever) {
-    return Future.error(
-        'Location permissions are permanently denied, we cannot request permissions.');
+    return Future.error('Location permissions are permanently denied, we cannot request permissions.');
   }
   return await Geolocator.getCurrentPosition();
 }

@@ -15,8 +15,7 @@ import '../screens/more_screen.dart';
 import '../screens/my_orders_screen.dart';
 import 'package:http/http.dart' as http;
 
-final bottomNavigationProvider =
-    StateNotifierProvider<BottomNavigationViewModel, int>(
+final bottomNavigationProvider = StateNotifierProvider<BottomNavigationViewModel, int>(
   (ref) => BottomNavigationViewModel(ref),
 );
 
@@ -26,14 +25,11 @@ class BottomNavigationViewModel extends StateNotifier<int> {
 
   void updateIndex(int newIndex) {
     state = newIndex;
-    ref
-        .read(bottomNavigationWidgetProvider.notifier)
-        .updateScreenIndex(newIndex);
+    ref.read(bottomNavigationWidgetProvider.notifier).updateScreenIndex(newIndex);
   }
 }
 
-final bottomNavigationWidgetProvider =
-    StateNotifierProvider<BottomNavigationWidgetViewModel, Widget>(
+final bottomNavigationWidgetProvider = StateNotifierProvider<BottomNavigationWidgetViewModel, Widget>(
   (ref) => BottomNavigationWidgetViewModel(),
 );
 
@@ -52,12 +48,9 @@ class BottomNavigationWidgetViewModel extends StateNotifier<Widget> {
   }
 }
 
-final specialityProvider =
-    StateProvider<String>((ref) => AppString.specialties[0]);
+final specialityProvider = StateProvider<String>((ref) => AppString.specialties[0]);
 
-final doctorSearchProvider =
-    StateNotifierProvider<DoctorSearchNotifier, AsyncValue<List<Doctor>>>(
-        (ref) => DoctorSearchNotifier());
+final doctorSearchProvider = StateNotifierProvider<DoctorSearchNotifier, AsyncValue<List<Doctor>>>((ref) => DoctorSearchNotifier());
 
 class DoctorSearchNotifier extends StateNotifier<AsyncValue<List<Doctor>>> {
   DoctorSearchNotifier() : super(AsyncLoading()) {
@@ -65,27 +58,25 @@ class DoctorSearchNotifier extends StateNotifier<AsyncValue<List<Doctor>>> {
   }
   init() async {
     Position position = await determinePosition();
-    String data = await getDoctorSearchData(position);
+    String data = await getDoctorSearchData(position: position);
     List? result = jsonDecode(data);
     if (result == null) {
       state = AsyncData([]);
     } else {
-      state = AsyncData(
-          List<Doctor>.from(result.map((el) => Doctor.fromJson(el)).toList()));
+      state = AsyncData(List<Doctor>.from(result.map((el) => Doctor.fromJson(el)).toList()));
     }
   }
 
   changeVal(String val) async {
     state = AsyncLoading();
     Position position = await determinePosition();
-    String data = await getDoctorSearchData(position);
+    String data = await getDoctorSearchData(position: position, speciality: val);
     print('data: ' + data);
     List? result = jsonDecode(data);
     if (result == null) {
       state = AsyncData([]);
     } else {
-      state = AsyncData(
-          List<Doctor>.from(result.map((el) => Doctor.fromJson(el)).toList()));
+      state = AsyncData(List<Doctor>.from(result.map((el) => Doctor.fromJson(el)).toList()));
     }
   }
 
@@ -112,10 +103,12 @@ class DoctorSearchNotifier extends StateNotifier<AsyncValue<List<Doctor>>> {
   }
 }
 
-Future<String> getDoctorSearchData(Position position) async {
+Future<String> getDoctorSearchData({required Position position, String? speciality}) async {
+  Uri uri = speciality == null
+      ? Uri.parse('${AppString.baseUrl}api/doctors?latitude=${position.latitude}&longitude=${position.longitude}')
+      : Uri.parse('${AppString.baseUrl}api/doctors?speciality=$speciality&latitude=${position.latitude}&longitude=${position.longitude}');
   var res = await http.get(
-    Uri.parse(
-        '${AppString.baseUrl}api/doctors?latitude=40.7128&longitude=-74.006'),
+    uri,
     headers: {
       HttpHeaders.authorizationHeader: 'Bearer ${storage.getToken()}',
     },
