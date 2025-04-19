@@ -44,7 +44,8 @@ final tabControllerProvider = Provider.autoDispose.family<TabController, TickerP
     return tabController;
   },
 );
-final doctorRequestsProvider = StateNotifierProvider.family<DoctorRequestsNotifier, AsyncValue<List<RequestDoctor>>, String>((ref, status) => DoctorRequestsNotifier(status));
+final doctorRequestsProvider =
+    StateNotifierProvider.family<DoctorRequestsNotifier, AsyncValue<List<RequestDoctor>>, String>((ref, status) => DoctorRequestsNotifier(status));
 
 class DoctorRequestsNotifier extends StateNotifier<AsyncValue<List<RequestDoctor>>> {
   final String status;
@@ -52,14 +53,18 @@ class DoctorRequestsNotifier extends StateNotifier<AsyncValue<List<RequestDoctor
     init();
   }
   init() async {
-    var res = await http.get(
-      Uri.parse('${AppString.baseUrl}api/doctors/appointments/pending'),
-      headers: {
-        HttpHeaders.authorizationHeader: 'Bearer ${storage.getToken()}',
-      },
-    );
-    print('DoctorRequestsNotifier data: ' + res.body);
-    List result = jsonDecode(res.body);
-    state = AsyncData(List<RequestDoctor>.from(result.map((el) => RequestDoctor.fromJson(el)).toList()));
+    try {
+      var res = await http.get(
+        Uri.parse('${AppString.baseUrl}api/doctors/appointments/pending'),
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer ${storage.getToken()}',
+        },
+      );
+      print('DoctorRequestsNotifier data: ' + res.body);
+      List result = jsonDecode(res.body);
+      state = AsyncData(List<RequestDoctor>.from(result.map((el) => RequestDoctor.fromJson(el)).toList()));
+    } catch (e, r) {
+      state = AsyncError(e, r);
+    }
   }
 }

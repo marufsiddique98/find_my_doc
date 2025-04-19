@@ -34,6 +34,7 @@ class Assets {
   static const String imagesNursing = 'assets/images/nursing.png';
   static const String imagesPhysiotherapy = 'assets/images/physiotherapy.png';
   static const String imagesVisa = 'assets/images/visa.png';
+  static const String imagesXray = 'assets/images/xray.png';
   static const String moreAbout = 'assets/icons/more/about.svg';
   static const String moreLanguage = 'assets/icons/more/language.svg';
   static const String moreLogout = 'assets/icons/more/logout.svg';

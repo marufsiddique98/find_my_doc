@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:find_my_doc/features/auth/presentation/screens/login_screen.dart';
+import 'package:find_my_doc/features/auth/presentation/screens/verification_screen.dart';
 import 'package:find_my_doc/features/home/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -131,42 +132,38 @@ class _DoctorSignupScreenState extends ConsumerState<DoctorSignupScreen> {
                   context,
                   text: 'Sign Up',
                   onTap: () async {
-                    try {
-                      log('message');
-                      showLoading(context);
-                      var position = await determinePosition();
-                      var response = await http.post(
-                        Uri.parse('${AppString.baseUrl}register'),
-                        body: jsonEncode({
-                          "email": email.text,
-                          "password": password.text,
-                          "name": name.text,
-                          "speciality": speciality,
-                          "latitude": position.latitude,
-                          "longitude": position.longitude,
-                          "role": "doctor"
-                        }),
-                      );
-                      var res = await http.post(
-                        Uri.parse('${AppString.baseUrl}login'),
-                        body: jsonEncode({
-                          "email": email.text,
-                          "password": password.text,
-                        }),
-                      );
-                      log(res.body);
-                      if (res.statusCode == 200) {
-                        storage.setToken(jsonDecode(res.body)['token']);
+                    if (accept) {
+                      try {
+                        log('message');
+                        showLoading(context);
+                        var position = await determinePosition();
+                        var response = await http.post(
+                          Uri.parse('${AppString.baseUrl}register'),
+                          body: jsonEncode({
+                            "email": email.text,
+                            "password": password.text,
+                            "name": name.text,
+                            "speciality": speciality,
+                            "latitude": position.latitude,
+                            "longitude": position.longitude,
+                            "role": "doctor"
+                          }),
+                        );
+                        var res = await http.post(
+                          Uri.parse('${AppString.baseUrl}login'),
+                          body: jsonEncode({
+                            "email": email.text,
+                            "password": password.text,
+                          }),
+                        );
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => VerificationScreen(email: email.text)));
+                      } catch (e) {
+                        Navigator.pop(context);
+                        log(e.toString());
+                        Fluttertoast.showToast(msg: e.toString());
                       }
-                      if (response.statusCode == 201) {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => HomeBottomNavigationBar()));
-                      } else {
-                        Fluttertoast.showToast(msg: 'Invalid login credentials');
-                      }
-                    } catch (e) {
-                      Navigator.pop(context);
-                      log(e.toString());
-                      Fluttertoast.showToast(msg: e.toString());
+                    } else {
+                      Fluttertoast.showToast(msg: 'Please accept the terms and conditions');
                     }
                   },
                 ),

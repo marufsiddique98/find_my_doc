@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:find_my_doc/features/home/presentation/screens/health_check_screen.dart';
 import 'package:find_my_doc/features/map/presentation/screens/map_screen.dart';
 import 'package:find_my_doc/main.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import '../../../../config/constants/app_strings.dart';
 import '../../../auth/presentation/screens/doctor_signup_screen.dart';
 import '../../data/models/doctor.dart';
 import '../screens/help_screen.dart';
+import '../screens/home_screen.dart';
 import '../screens/more_screen.dart';
 import '../screens/my_orders_screen.dart';
 import 'package:http/http.dart' as http;
@@ -34,12 +36,12 @@ final bottomNavigationWidgetProvider = StateNotifierProvider<BottomNavigationWid
 );
 
 class BottomNavigationWidgetViewModel extends StateNotifier<Widget> {
-  BottomNavigationWidgetViewModel() : super(MapScreen());
+  BottomNavigationWidgetViewModel() : super(HomeScreen());
 
   final List<Widget> _screens = [
-    MapScreen(),
-    HelpScreen(),
+    HomeScreen(),
     MyOrdersScreen(),
+    HealthCheckScreen(),
     MoreScreen(),
   ];
 

@@ -1,4 +1,5 @@
 import 'package:find_my_doc/features/home/data/models/request_doctor.dart';
+import 'package:find_my_doc/features/map/presentation/screens/map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -83,6 +84,16 @@ class _MyOrdersScreenState extends ConsumerState<MyOrdersScreen> with SingleTick
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => MapScreen()));
+          },
+          label: Row(
+            children: [
+              Icon(Icons.add),
+              Text('Book New Appointment'),
+            ],
+          )),
     );
   }
 }
@@ -102,11 +113,11 @@ class MyOrderListWidget extends ConsumerWidget {
             separatorBuilder: (_, i) => Gap(15),
             itemBuilder: (_, index) {
               RequestDoctor requestDoctor = data[index];
-              return MyOrderWidget(requestDoctor: requestDoctor);
+              return data.isNotEmpty ? MyOrderWidget(requestDoctor: requestDoctor) : Center(child: Text('No records found...'));
             },
           );
         },
-        error: (error, t) => SizedBox(),
+        error: (error, t) => Center(child: Text(error.toString())),
         loading: () => Center(child: CircularProgressIndicator()));
   }
 }

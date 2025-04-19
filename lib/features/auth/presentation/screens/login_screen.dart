@@ -51,42 +51,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Image.asset(Assets.imagesLogo, width: 170.w),
                 Gap(50),
                 ...MyInputField(context, text: 'Email', controller: email),
-                ...MyInputField(context,
-                    text: 'Password', controller: password),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20.0, bottom: 10),
-                  child: PrimaryButton(
-                    context,
-                    text: 'Login',
-                    onTap: () async {
-                      try {
-                        showLoading(context);
-                        var response = await http.post(
-                          Uri.parse('${AppString.baseUrl}login'),
-                          body: jsonEncode({
-                            "email": email.text,
-                            "password": password.text,
-                          }),
-                        );
-                        Navigator.pop(context);
-                        log(response.body);
-                        if (response.statusCode == 200) {
-                          storage.setToken(jsonDecode(response.body)['token']);
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => HomeBottomNavigationBar()));
-                        } else {
-                          Fluttertoast.showToast(msg: response.body);
-                        }
-                      } catch (e) {
-                        Navigator.pop(context);
-                        log(e.toString());
-                        Fluttertoast.showToast(msg: e.toString());
-                      }
-                    },
-                  ),
-                ),
+                ...MyInputField(context, text: 'Password', controller: password),
                 Transform.translate(
                   offset: Offset(-14, 0),
                   child: Row(
@@ -129,21 +94,54 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                 ),
                 Padding(
+                  padding: const EdgeInsets.only(top: 20.0, bottom: 10),
+                  child: PrimaryButton(
+                    context,
+                    text: 'Login',
+                    onTap: () async {
+                      if (accept) {
+                        try {
+                          showLoading(context);
+                          var response = await http.post(
+                            Uri.parse('${AppString.baseUrl}login'),
+                            body: jsonEncode({
+                              "email": email.text,
+                              "password": password.text,
+                            }),
+                          );
+                          Navigator.pop(context);
+                          log('Login response ==> ${response.body}');
+                          if (response.statusCode == 200) {
+                            storage.setToken(jsonDecode(response.body)['token']);
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => HomeBottomNavigationBar()));
+                          } else {
+                            Fluttertoast.showToast(msg: response.body);
+                          }
+                        } catch (e) {
+                          Navigator.pop(context);
+                          log(e.toString());
+                          Fluttertoast.showToast(msg: e.toString());
+                        }
+                      } else {
+                        Fluttertoast.showToast(msg: 'Please accept the terms and conditions');
+                      }
+                    },
+                  ),
+                ),
+                Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20.0),
                   child: Text('OR'),
                 ),
                 PrimaryButton(
                   context,
                   text: 'Register As A Doctor',
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => DoctorSignupScreen())),
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DoctorSignupScreen())),
                 ),
                 PrimaryButton(
                   context,
                   isOutlined: true,
                   text: 'Create An Account',
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => SignupScreen())),
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SignupScreen())),
                 ),
                 Gap(20.h),
                 Image.asset(

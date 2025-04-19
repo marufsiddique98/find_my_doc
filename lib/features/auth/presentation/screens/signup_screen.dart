@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:find_my_doc/features/auth/presentation/screens/login_screen.dart';
+import 'package:find_my_doc/features/auth/presentation/screens/verification_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -65,10 +66,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 Gap(40),
                 ...MyInputField(context, text: 'Full Name', controller: name),
                 ...MyInputField(context, text: 'Email', controller: email),
-                ...MyInputField(context,
-                    text: 'Password', controller: password),
-                ...MyInputField(context,
-                    text: 'Confirm Password', controller: cpassword),
+                ...MyInputField(context, text: 'Password', controller: password),
+                ...MyInputField(context, text: 'Confirm Password', controller: cpassword),
                 Transform.translate(
                   offset: Offset(-14, 0),
                   child: Row(
@@ -109,40 +108,34 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   context,
                   text: 'Sign Up',
                   onTap: () async {
-                    try {
-                      log('message');
-                      showLoading(context);
-                      var response = await http.post(
-                        Uri.parse('${AppString.baseUrl}register'),
-                        body: jsonEncode({
-                          "email": email.text,
-                          "password": password.text,
-                          "name": name.text,
-                          "role": "patient",
-                        }),
-                      );
-                      var res = await http.post(
-                        Uri.parse('${AppString.baseUrl}login'),
-                        body: jsonEncode({
-                          "email": email.text,
-                          "password": password.text,
-                        }),
-                      );
-                      log(res.body);
-                      if (res.statusCode == 200) {
-                        storage.setToken(jsonDecode(res.body)['token']);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => HomeBottomNavigationBar()));
-                      } else {
-                        Fluttertoast.showToast(
-                            msg: 'Invalid login credentials');
+                    if (accept) {
+                      try {
+                        log('message');
+                        showLoading(context);
+                        var response = await http.post(
+                          Uri.parse('${AppString.baseUrl}register'),
+                          body: jsonEncode({
+                            "email": email.text,
+                            "password": password.text,
+                            "name": name.text,
+                            "role": "patient",
+                          }),
+                        );
+                        var res = await http.post(
+                          Uri.parse('${AppString.baseUrl}login'),
+                          body: jsonEncode({
+                            "email": email.text,
+                            "password": password.text,
+                          }),
+                        );
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => VerificationScreen(email: email.text)));
+                      } catch (e) {
+                        Navigator.pop(context);
+                        log(e.toString());
+                        Fluttertoast.showToast(msg: e.toString());
                       }
-                    } catch (e) {
-                      Navigator.pop(context);
-                      log(e.toString());
-                      Fluttertoast.showToast(msg: e.toString());
+                    } else {
+                      Fluttertoast.showToast(msg: 'Please accept the terms and conditions');
                     }
                   },
                 ),
@@ -159,8 +152,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => LoginScreen())),
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => LoginScreen())),
                       child: Text(
                         'Sign In',
                         style: GoogleFonts.poppins(

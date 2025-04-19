@@ -22,6 +22,7 @@ List<Widget> MyInputField(BuildContext context, {required String text, required 
     SizeExtension(10).verticalSpace,
     TextFormField(
       controller: controller,
+      obscureText: text.contains('Password'),
       decoration: InputDecoration(
         border: borderStyle,
         enabledBorder: borderStyle,
