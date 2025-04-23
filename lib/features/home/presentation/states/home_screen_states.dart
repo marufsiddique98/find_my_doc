@@ -52,15 +52,17 @@ class BottomNavigationWidgetViewModel extends StateNotifier<Widget> {
 
 final specialityProvider = StateProvider<String>((ref) => AppString.specialties[0]);
 
-final doctorSearchProvider = StateNotifierProvider<DoctorSearchNotifier, AsyncValue<List<Doctor>>>((ref) => DoctorSearchNotifier());
+final doctorSearchProvider = StateNotifierProvider<DoctorSearchNotifier, AsyncValue<List<Doctor>>>((ref) => DoctorSearchNotifier(ref));
 
 class DoctorSearchNotifier extends StateNotifier<AsyncValue<List<Doctor>>> {
-  DoctorSearchNotifier() : super(AsyncLoading()) {
+  final Ref ref;
+  DoctorSearchNotifier(this.ref) : super(AsyncLoading()) {
     init();
   }
   init() async {
+    String spec = ref.read(specialityProvider);
     Position position = await determinePosition();
-    String data = await getDoctorSearchData(position: position);
+    String data = await getDoctorSearchData(position: position, speciality: spec);
     List? result = jsonDecode(data);
     if (result == null) {
       state = AsyncData([]);
@@ -83,7 +85,6 @@ class DoctorSearchNotifier extends StateNotifier<AsyncValue<List<Doctor>>> {
   }
 
   Future<void> requestDoctorAppointment(Doctor doctor) async {
-    state = AsyncLoading();
     Position position = await determinePosition();
     var res = await http.post(
       Uri.parse('${AppString.baseUrl}api/appointments'),
@@ -91,14 +92,12 @@ class DoctorSearchNotifier extends StateNotifier<AsyncValue<List<Doctor>>> {
         HttpHeaders.authorizationHeader: 'Bearer ${storage.getToken()}',
       },
       body: jsonEncode({
-        {
-          "doctor_id": doctor,
-          "patient_id": 2,
-          "latitude": position.latitude,
-          "longitude": position.longitude,
-          "urgency_level": 3,
-          "created_at": DateTime.now().toString(),
-        }
+        "doctor_id": doctor,
+        "patient_id": 2,
+        "latitude": position.latitude,
+        "longitude": position.longitude,
+        "urgency_level": 3,
+        "created_at": DateTime.now().toString(),
       }),
     );
     Fluttertoast.showToast(msg: res.body);

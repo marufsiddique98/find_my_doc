@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppString {
   AppString._();
   static const String appName = 'Find My Doc';
-  static const String baseUrl = 'http://192.168.0.102:3001/';
+  static const String baseUrl = 'http://192.168.0.100:3001/';
   static const List<String> specialties = [
     "Cardiologist",
     "Neurologist",

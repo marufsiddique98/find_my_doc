@@ -10,12 +10,17 @@ import '../../../../map/presentation/screens/map_screen.dart';
 import '../../../data/models/doctor.dart';
 import '../../states/home_screen_states.dart';
 
-class HealthCheckupDoctorScreen extends ConsumerWidget {
+class HealthCheckupDoctorScreen extends ConsumerStatefulWidget {
   const HealthCheckupDoctorScreen({super.key, required this.speciality});
   final String speciality;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HealthCheckupDoctorScreen> createState() => _HealthCheckupDoctorScreenState();
+}
+
+class _HealthCheckupDoctorScreenState extends ConsumerState<HealthCheckupDoctorScreen> {
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(doctorSearchProvider);
     final notifier = ref.read(doctorSearchProvider.notifier);
     final speciality = ref.watch(specialityProvider);

@@ -1,4 +1,5 @@
 import 'package:find_my_doc/config/constants/app_colors.dart';
+import 'package:find_my_doc/features/home/presentation/screens/health_check_screen.dart';
 import 'package:find_my_doc/features/map/presentation/screens/map_screen.dart';
 import 'package:find_my_doc/features/notification/presentation/notification_screen.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +61,9 @@ class HomeScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => HealthCheckScreen()));
+                    },
                     child: Card(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 28.0, horizontal: 15),

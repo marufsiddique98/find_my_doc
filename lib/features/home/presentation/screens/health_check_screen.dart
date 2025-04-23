@@ -4,22 +4,24 @@ import 'package:find_my_doc/config/constants/app_strings.dart';
 import 'package:find_my_doc/core/common/widgets/primary_button.dart';
 import 'package:find_my_doc/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../../core/common/widgets/my_app_bar.dart';
 import '../../../../generated/assets.dart';
+import '../states/home_screen_states.dart';
 import 'extra/health_checkup_doctor_screen.dart';
 
-class HealthCheckScreen extends StatefulWidget {
+class HealthCheckScreen extends ConsumerStatefulWidget {
   const HealthCheckScreen({super.key});
 
   @override
-  State<HealthCheckScreen> createState() => _HealthCheckScreenState();
+  ConsumerState<HealthCheckScreen> createState() => _HealthCheckScreenState();
 }
 
-class _HealthCheckScreenState extends State<HealthCheckScreen> {
+class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
   String search = '';
   String result = '';
   bool launchedBefore = true;
@@ -72,6 +74,7 @@ class _HealthCheckScreenState extends State<HealthCheckScreen> {
                       // setState(() {
                       //   result = 'You need a ' + body['specialist'] + ' for a checkup.';
                       // });
+                      ref.read(specialityProvider.notifier).state = body['specialist'];
                       Navigator.push(context, MaterialPageRoute(builder: (_) => HealthCheckupDoctorScreen(speciality: body['specialist'])));
                     } catch (er) {
                       setState(() {
