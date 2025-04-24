@@ -109,6 +109,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   text: 'Sign Up',
                   onTap: () async {
                     if (accept) {
+                      if (password.text != cpassword.text) {
+                        Fluttertoast.showToast(msg: 'Passwords do not match');
+                        return;
+                      }
                       try {
                         log('message');
                         showLoading(context);
