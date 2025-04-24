@@ -8,9 +8,8 @@ import 'package:http/http.dart' as http;
 import '../../../../config/constants/app_strings.dart';
 import '../../../../main.dart';
 
-final profileProvider = FutureProvider<AppUser?>((ref) async {
+final profileProvider = FutureProvider.autoDispose<AppUser?>((ref) async {
   try {
-    log('message');
     var res = await http.get(Uri.parse('${AppString.baseUrl}api/profile'), headers: {'Authorization': 'Bearer ${storage.getToken()}'});
     log(res.body);
     return AppUser.fromJson(jsonDecode(res.body));

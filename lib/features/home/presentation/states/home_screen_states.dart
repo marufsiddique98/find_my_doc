@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:find_my_doc/features/home/presentation/screens/health_check_screen.dart';
@@ -52,7 +53,7 @@ class BottomNavigationWidgetViewModel extends StateNotifier<Widget> {
 
 final specialityProvider = StateProvider<String>((ref) => AppString.specialties[0]);
 
-final doctorSearchProvider = StateNotifierProvider<DoctorSearchNotifier, AsyncValue<List<Doctor>>>((ref) => DoctorSearchNotifier(ref));
+final doctorSearchProvider = StateNotifierProvider.autoDispose<DoctorSearchNotifier, AsyncValue<List<Doctor>>>((ref) => DoctorSearchNotifier(ref));
 
 class DoctorSearchNotifier extends StateNotifier<AsyncValue<List<Doctor>>> {
   final Ref ref;
@@ -85,22 +86,23 @@ class DoctorSearchNotifier extends StateNotifier<AsyncValue<List<Doctor>>> {
   }
 
   Future<void> requestDoctorAppointment(Doctor doctor) async {
-    Position position = await determinePosition();
-    var res = await http.post(
-      Uri.parse('${AppString.baseUrl}api/appointments'),
-      headers: {
-        HttpHeaders.authorizationHeader: 'Bearer ${storage.getToken()}',
-      },
-      body: jsonEncode({
-        "doctor_id": doctor,
-        "patient_id": 2,
-        "latitude": position.latitude,
-        "longitude": position.longitude,
-        "urgency_level": 3,
-        "created_at": DateTime.now().toString(),
-      }),
-    );
-    Fluttertoast.showToast(msg: res.body);
+    try {
+      Position position = await determinePosition();
+      var res = await http.post(
+        Uri.parse('${AppString.baseUrl}api/appointments'),
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer ${storage.getToken()}',
+        },
+        body: jsonEncode({"doctor_id": doctor.id, "latitude": position.latitude, "longitude": position.longitude, "urgency_level": 3}),
+      );
+      if (res.statusCode == 201) {
+        Fluttertoast.showToast(msg: 'Successfully requested for an appointment...');
+      }
+      Fluttertoast.showToast(msg: res.body);
+      log(res.body.toString());
+    } catch (e) {
+      log('Error ==> ' + e.toString());
+    }
   }
 }
 

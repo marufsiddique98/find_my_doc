@@ -125,13 +125,14 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             "role": "patient",
                           }),
                         );
-                        var res = await http.post(
-                          Uri.parse('${AppString.baseUrl}login'),
-                          body: jsonEncode({
-                            "email": email.text,
-                            "password": password.text,
-                          }),
-                        );
+                        // var res = await http.post(
+                        //   Uri.parse('${AppString.baseUrl}login'),
+                        //   body: jsonEncode({
+                        //     "email": email.text,
+                        //     "password": password.text,
+                        //   }),
+                        // );
+                        Navigator.pop(context);
                         Navigator.push(context, MaterialPageRoute(builder: (_) => VerificationScreen(email: email.text)));
                       } catch (e) {
                         Navigator.pop(context);

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,8 +45,8 @@ final tabControllerProvider = Provider.autoDispose.family<TabController, TickerP
     return tabController;
   },
 );
-final doctorRequestsProvider =
-    StateNotifierProvider.family<DoctorRequestsNotifier, AsyncValue<List<RequestDoctor>>, String>((ref, status) => DoctorRequestsNotifier(status));
+final doctorRequestsProvider = StateNotifierProvider.autoDispose
+    .family<DoctorRequestsNotifier, AsyncValue<List<RequestDoctor>>, String>((ref, status) => DoctorRequestsNotifier(status));
 
 class DoctorRequestsNotifier extends StateNotifier<AsyncValue<List<RequestDoctor>>> {
   final String status;
@@ -55,7 +56,7 @@ class DoctorRequestsNotifier extends StateNotifier<AsyncValue<List<RequestDoctor
   init() async {
     try {
       var res = await http.get(
-        Uri.parse('${AppString.baseUrl}api/doctors/appointments/pending'),
+        Uri.parse('${AppString.baseUrl}api/doctors/appointments/$status'),
         headers: {
           HttpHeaders.authorizationHeader: 'Bearer ${storage.getToken()}',
         },
@@ -66,5 +67,21 @@ class DoctorRequestsNotifier extends StateNotifier<AsyncValue<List<RequestDoctor
     } catch (e, r) {
       state = AsyncError(e, r);
     }
+  }
+
+  void accept(int id) async {
+    state = AsyncLoading();
+    var res = await http.patch(
+      Uri.parse('${AppString.baseUrl}api/appointments/$id/accept'),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer ${storage.getToken()}',
+      },
+    );
+    if (res.statusCode == 201 || res.statusCode == 200) {
+      Fluttertoast.showToast(msg: res.body.toString());
+    } else {
+      Fluttertoast.showToast(msg: 'Something error occurred');
+    }
+    init();
   }
 }

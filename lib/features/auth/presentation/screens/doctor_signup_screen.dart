@@ -156,6 +156,7 @@ class _DoctorSignupScreenState extends ConsumerState<DoctorSignupScreen> {
                             "password": password.text,
                           }),
                         );
+                        Navigator.pop(context);
                         Navigator.push(context, MaterialPageRoute(builder: (_) => VerificationScreen(email: email.text)));
                       } catch (e) {
                         Navigator.pop(context);

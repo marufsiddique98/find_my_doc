@@ -26,7 +26,7 @@ class _MyOrdersScreenState extends ConsumerState<MyOrdersScreen> with SingleTick
     final index = ref.watch(myOrderScreenTabIndexProvider);
     return Scaffold(
       appBar: MyAppBar(
-        title: 'My Orders',
+        title: 'My Appointments',
         back: false,
       ),
       body: Padding(
@@ -46,7 +46,7 @@ class _MyOrdersScreenState extends ConsumerState<MyOrdersScreen> with SingleTick
                   ),
                   Tab(
                     height: 40.h,
-                    text: '    Completed    ',
+                    text: '    Accepted    ',
                   ),
                 ],
                 labelColor: Colors.white,
@@ -76,10 +76,6 @@ class _MyOrdersScreenState extends ConsumerState<MyOrdersScreen> with SingleTick
             if (index == 1)
               Expanded(
                 child: MyOrderListWidget(status: 'accepted'),
-              ),
-            if (index == 2)
-              Expanded(
-                child: MyOrderListWidget(status: 'cancelled'),
               ),
           ],
         ),
@@ -113,7 +109,7 @@ class MyOrderListWidget extends ConsumerWidget {
             separatorBuilder: (_, i) => Gap(15),
             itemBuilder: (_, index) {
               RequestDoctor requestDoctor = data[index];
-              return data.isNotEmpty ? MyOrderWidget(requestDoctor: requestDoctor) : Center(child: Text('No records found...'));
+              return data.isNotEmpty ? MyOrderWidget(requestDoctor: requestDoctor, status: status) : Center(child: Text('No records found...'));
             },
           );
         },

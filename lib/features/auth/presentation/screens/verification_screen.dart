@@ -61,6 +61,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   } catch (e) {
                     Fluttertoast.showToast(msg: 'Invalid code.');
                   }
+                } else {
+                  Fluttertoast.showToast(msg: res.body.toString());
                 }
               } catch (e) {
                 Fluttertoast.showToast(msg: e.toString());

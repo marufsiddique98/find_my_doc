@@ -1,15 +1,19 @@
+import 'package:find_my_doc/core/common/widgets/primary_button.dart';
 import 'package:find_my_doc/features/home/data/models/request_doctor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../config/constants/app_colors.dart';
+import '../states/my_order_screen_states.dart';
 
 class MyOrderWidget extends StatelessWidget {
-  const MyOrderWidget({super.key, required this.requestDoctor});
+  const MyOrderWidget({super.key, required this.requestDoctor, required this.status});
   final RequestDoctor requestDoctor;
+  final String status;
 
   @override
   Widget build(BuildContext context) {
@@ -165,6 +169,37 @@ class MyOrderWidget extends StatelessWidget {
               ),
             ],
           ),
+          if (status == 'pending') Gap(10),
+          if (status == 'pending')
+            Consumer(builder: (_, ref, __) {
+              return PrimaryButton(
+                context,
+                text: 'Accept',
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                            title: Text('Are you sure?'),
+                            content: Text('Do you want to accept the request?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(ctx);
+                                },
+                                child: Text('No'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  ref.read(doctorRequestsProvider(status).notifier).accept(requestDoctor.id!);
+                                  Navigator.pop(ctx);
+                                },
+                                child: Text('Yes'),
+                              ),
+                            ],
+                          ));
+                },
+              );
+            }),
         ],
       ),
     );
